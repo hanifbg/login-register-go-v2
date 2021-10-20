@@ -37,12 +37,12 @@ func (handler *Handler) LoginUser(c echo.Context) error {
 	createLoginReq := new(request.LoginUserRequest)
 
 	if err := c.Bind(createLoginReq); err != nil {
-		return c.JSON(http.StatusInternalServerError, nil)
+		return c.JSON(http.StatusInternalServerError, "cuk")
 	}
 
 	token, err := handler.service.LoginUser(createLoginReq.Email, createLoginReq.Password)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, token)

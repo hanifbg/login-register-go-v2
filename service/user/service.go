@@ -2,8 +2,10 @@ package user
 
 import (
 	"errors"
+	"os"
 	"time"
 
+	"github.com/golang-jwt/jwt"
 	serv "github.com/hanifbg/login_register_v2/service"
 	util "github.com/hanifbg/login_register_v2/util/password"
 	"github.com/hanifbg/login_register_v2/util/validator"
@@ -51,7 +53,7 @@ func (s *service) CreateUser(data CreateUserData) error {
 	return nil
 }
 
-func (s *service) LoginUser(email string, password string) (token string, err error) {
+func (s *service) LoginUser(email string, password string) (string, error) {
 	userData, err := s.repository.LoginUser(email)
 	if err != nil {
 		return "", err
@@ -61,5 +63,13 @@ func (s *service) LoginUser(email string, password string) (token string, err er
 		return "", errors.New("wrong credentials")
 	}
 
-	return "JWT TOKEN", nil
+	claims := jwt.MapClaims{}
+	claims["authorized"] = true
+	claims["id"] = userData.ID
+	claims["email"] = userData.Email
+	claims["exp"] = time.Now().Add(time.Hour * 1).Unix() //expired token
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 }
