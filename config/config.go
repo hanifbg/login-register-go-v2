@@ -59,16 +59,16 @@ func initConfig() *AppConfig {
 	defaultConfig.DbPassword = "1"
 	defaultConfig.DbName = "alta_final"
 
-	// viper.AutomaticEnv()
-	// viper.SetEnvPrefix("gohexagonal")
-	// viper.BindEnv("app_port")
-	// viper.BindEnv("app_environment")
-	// viper.BindEnv("db_driver")
-	// viper.BindEnv("db_address")
-	// viper.BindEnv("db_port")
-	// viper.BindEnv("db_username")
-	// viper.BindEnv("db_password")
-	// viper.BindEnv("db_name")
+	viper.AutomaticEnv()
+	viper.SetEnvPrefix("go")
+	viper.BindEnv("app_port")
+	viper.BindEnv("app_environment")
+	viper.BindEnv("db_driver")
+	viper.BindEnv("db_address")
+	viper.BindEnv("db_port")
+	viper.BindEnv("db_username")
+	viper.BindEnv("db_password")
+	viper.BindEnv("db_name")
 
 	var finalConfig AppConfig
 	err := viper.Unmarshal(&finalConfig)

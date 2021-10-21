@@ -23,11 +23,11 @@ import (
 func newDatabaseConnection(config *config.AppConfig) *gorm.DB {
 
 	configDB := map[string]string{
-		"DB_Username": os.Getenv("DB_USERNAME"),
-		"DB_Password": os.Getenv("DB_PASSWORD"),
-		"DB_Port":     os.Getenv("DB_PORT"),
-		"DB_Host":     os.Getenv("DB_ADDRESS"),
-		"DB_Name":     os.Getenv("DB_NAME"),
+		"DB_Username": os.Getenv("GO_DB_USERNAME"),
+		"DB_Password": os.Getenv("GO_DB_PASSWORD"),
+		"DB_Port":     os.Getenv("GO_DB_PORT"),
+		"DB_Host":     os.Getenv("GO_DB_ADDRESS"),
+		"DB_Name":     os.Getenv("GO_DB_NAME"),
 	}
 
 	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
@@ -63,9 +63,8 @@ func main() {
 	e := echo.New()
 
 	handler.RegisterPath(e, userHandler)
-	fmt.Println(config.AppPort)
 	go func() {
-		address := fmt.Sprintf("localhost:%d", 8080)
+		address := fmt.Sprintf("localhost:%d", config.AppPort)
 
 		if err := e.Start(address); err != nil {
 			log.Info("shutting down the server")
