@@ -3,6 +3,7 @@ package user
 import (
 	"net/http"
 
+	"github.com/golang-jwt/jwt"
 	"github.com/hanifbg/login_register_v2/handler/user/request"
 	"github.com/hanifbg/login_register_v2/service/user"
 	echo "github.com/labstack/echo/v4"
@@ -46,4 +47,16 @@ func (handler *Handler) LoginUser(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, token)
+}
+
+func (handler *Handler) AuthUser(c echo.Context) error {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims) //conver to jwt.MapClaims
+
+	userID, ok := claims["id"]
+	if !ok {
+		return c.JSON(http.StatusForbidden, ok)
+	}
+
+	return c.JSON(http.StatusOK, userID)
 }
