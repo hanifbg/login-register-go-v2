@@ -66,6 +66,10 @@ func (s *service) LoginUser(email string, password string) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
 	claims["id"] = userData.ID
+	claims["role"] = "default"
+	if userData.Role != 1 {
+		claims["role"] = "admin"
+	}
 	claims["exp"] = time.Now().Add(time.Hour * 1).Unix() //expired token
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
