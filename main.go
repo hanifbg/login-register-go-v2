@@ -71,12 +71,10 @@ func main() {
 		}
 	}()
 
-	// Wait for interrupt signal to gracefully shutdown the server with
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 
-	// a timeout of 10 seconds to shutdown the server
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 

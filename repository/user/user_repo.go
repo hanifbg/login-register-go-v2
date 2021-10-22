@@ -66,7 +66,6 @@ func (col *User) ToUser() user.User {
 	return user
 }
 
-//InsertUser Insert new User into storage
 func (repo *GormRepository) CreateUser(user user.User) error {
 	userData := newUserTable(user)
 
