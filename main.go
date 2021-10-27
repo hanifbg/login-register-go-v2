@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strconv"
 	"time"
 
 	"github.com/hanifbg/login_register_v2/config"
@@ -23,11 +24,11 @@ import (
 func newDatabaseConnection(config *config.AppConfig) *gorm.DB {
 
 	configDB := map[string]string{
-		"DB_Username": os.Getenv("GO_DB_USERNAME"),
-		"DB_Password": os.Getenv("GO_DB_PASSWORD"),
-		"DB_Port":     os.Getenv("GO_DB_PORT"),
-		"DB_Host":     os.Getenv("GO_DB_ADDRESS"),
-		"DB_Name":     os.Getenv("GO_DB_NAME"),
+		"DB_Username": config.DbUsername,
+		"DB_Password": config.DbPassword,
+		"DB_Port":     strconv.Itoa(config.DbPort),
+		"DB_Host":     config.DbAddress,
+		"DB_Name":     config.DbName,
 	}
 
 	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
