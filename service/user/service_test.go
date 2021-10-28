@@ -94,11 +94,11 @@ func TestCreateUser(t *testing.T) {
 
 func TestLoginUser(t *testing.T) {
 	t.Run("Expect login user notfound", func(t *testing.T) {
-		userRepo.On("LoginUser", mock.AnythingOfType("string")).Return(nil, errors.New("record not found")).Once()
+		userRepo.On("LoginUser", mock.AnythingOfType("string")).Return(nil, errors.New("Data was not found")).Once()
 
 		token, err := userService.LoginUser(email, password)
 		assert.Equal(t, token, "")
-		assert.Equal(t, err, errors.New("record not found"))
+		assert.Equal(t, err, errors.New("Data was not found"))
 	})
 
 	t.Run("Expect login failed wrong password", func(t *testing.T) {

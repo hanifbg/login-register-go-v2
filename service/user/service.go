@@ -56,7 +56,7 @@ func (s *service) CreateUser(data CreateUserData) error {
 func (s *service) LoginUser(email string, password string) (string, error) {
 	userData, err := s.repository.LoginUser(email)
 	if err != nil {
-		return "", err
+		return "", serv.ErrNotFound
 	}
 
 	if !util.ComparePassword(userData.Password, password) {
