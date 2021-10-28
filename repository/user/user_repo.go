@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/hanifbg/login_register_v2/service/user"
@@ -9,17 +10,17 @@ import (
 )
 
 type User struct {
-	ID           uint
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	DeletedAt    *time.Time
-	Name         string `json:"name"  validate:"required"`
-	Email        string `json:"email" validate:"required,email" gorm:"type:varchar(20)"`
-	Phone_number string `json:"phone_number" validate:"required,number"`
-	Password     string `json:"password"  validate:"required"`
-	Address      string `json:"address"  validate:"required"`
-	Role         int
-	Token_hash   string
+	ID          uint
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   *time.Time
+	Name        string `json:"name"  validate:"required"`
+	Email       string `json:"email" validate:"required,email" gorm:"type:varchar(20),unique"`
+	PhoneNumber string `json:"phone_number" validate:"required,number" gorm:"unique"`
+	Password    string `json:"password"  validate:"required"`
+	Address     string `json:"address"  validate:"required"`
+	Role        int
+	Token_hash  string
 }
 
 type GormRepository struct {
@@ -61,7 +62,7 @@ func (col *User) ToUser() user.User {
 	user.Address = col.Address
 	user.Role = col.Role
 	user.Token_hash = col.Token_hash
-	user.Phone_number = col.Phone_number
+	user.Phone_number = col.PhoneNumber
 
 	return user
 }
@@ -80,6 +81,7 @@ func (repo *GormRepository) LoginUser(email string) (*user.User, error) {
 	var userData User
 
 	err := repo.DB.Where("email = ?", email).First(&userData).Error
+	fmt.Println(err)
 	if err != nil {
 		return nil, err
 	}

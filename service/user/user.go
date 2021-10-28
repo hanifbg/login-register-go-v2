@@ -8,8 +8,8 @@ type User struct {
 	UpdatedAt    time.Time
 	DeletedAt    *time.Time
 	Name         string
-	Email        string
-	Phone_number string
+	Email        string `gorm:"unique"`
+	Phone_number string `gorm:"unique"`
 	Password     string
 	Address      string
 	Role         int
@@ -19,7 +19,7 @@ type User struct {
 func NewUser(
 	name string,
 	email string,
-	phone_number string,
+	phoneNumber string,
 	password string,
 	address string,
 	createdAt time.Time,
@@ -32,7 +32,7 @@ func NewUser(
 		DeletedAt:    nil,
 		Name:         name,
 		Email:        email,
-		Phone_number: phone_number,
+		Phone_number: phoneNumber,
 		Password:     password,
 		Address:      address,
 		Role:         1,

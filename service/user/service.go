@@ -48,7 +48,7 @@ func (s *service) CreateUser(data CreateUserData) error {
 
 	err = s.repository.CreateUser(user)
 	if err != nil {
-		return err
+		return serv.ErrInternalServerError
 	}
 	return nil
 }
