@@ -25,6 +25,7 @@ const (
 var (
 	userService user.Service
 	userRepo    userMock.Repository
+	util        userMock.UtilPassword
 
 	userData          user.User
 	userData2         *user.User
@@ -61,7 +62,7 @@ func setup() {
 		Address:      address,
 	}
 
-	userService = user.NewService(&userRepo)
+	userService = user.NewService(&userRepo, &util)
 }
 
 func TestMain(m *testing.M) {
@@ -72,6 +73,7 @@ func TestMain(m *testing.M) {
 func TestCreateUser(t *testing.T) {
 	t.Run("Expect insert user success", func(t *testing.T) {
 		userRepo.On("CreateUser", mock.AnythingOfType("user.User"), mock.AnythingOfType("string")).Return(nil).Once()
+		util.On("EncryptPassword", mock.AnythingOfType("string")).Return([]byte(password), nil).Once()
 
 		err := userService.CreateUser(insertUserData)
 		assert.Nil(t, err)
@@ -79,6 +81,7 @@ func TestCreateUser(t *testing.T) {
 
 	t.Run("Expect failed user validattion", func(t *testing.T) {
 		userRepo.On("CreateUser", mock.AnythingOfType("user.User"), mock.AnythingOfType("string")).Return(serv.ErrInvalidData).Once()
+
 		err := userService.CreateUser(invalidInsertData)
 		assert.NotNil(t, err)
 		assert.Equal(t, err, serv.ErrInvalidData)
@@ -86,6 +89,8 @@ func TestCreateUser(t *testing.T) {
 
 	t.Run("Expect failed user validattion", func(t *testing.T) {
 		userRepo.On("CreateUser", mock.AnythingOfType("user.User"), mock.AnythingOfType("string")).Return(serv.ErrInternalServerError).Once()
+		util.On("EncryptPassword", mock.AnythingOfType("string")).Return([]byte(password), nil).Once()
+
 		err := userService.CreateUser(insertUserData)
 		assert.NotNil(t, err)
 		assert.Equal(t, err, serv.ErrInternalServerError)
@@ -103,10 +108,20 @@ func TestLoginUser(t *testing.T) {
 
 	t.Run("Expect login failed wrong password", func(t *testing.T) {
 		userRepo.On("LoginUser", mock.AnythingOfType("string")).Return(&userData, nil).Once()
+		util.On("ComparePassword", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(false).Once()
 
 		token, err := userService.LoginUser(email, password)
 		assert.Equal(t, token, "")
 		assert.NotNil(t, err)
 		assert.Equal(t, err, errors.New("wrong credentials"))
+	})
+
+	t.Run("Expect login success", func(t *testing.T) {
+		userRepo.On("LoginUser", mock.AnythingOfType("string")).Return(&userData, nil).Once()
+		util.On("ComparePassword", mock.AnythingOfType("string"), mock.AnythingOfType("string")).Return(true).Once()
+
+		token, err := userService.LoginUser(email, password)
+		assert.Nil(t, err)
+		assert.NotEqual(t, token, "")
 	})
 }

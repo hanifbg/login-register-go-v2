@@ -9,3 +9,8 @@ type Repository interface {
 	CreateUser(user User) error
 	LoginUser(email string) (*User, error)
 }
+
+type UtilPassword interface {
+	EncryptPassword(string) ([]byte, error)
+	ComparePassword(string, string) bool
+}

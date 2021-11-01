@@ -7,17 +7,18 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	serv "github.com/hanifbg/login_register_v2/service"
-	util "github.com/hanifbg/login_register_v2/util/password"
 	"github.com/hanifbg/login_register_v2/util/validator"
 )
 
 type service struct {
-	repository Repository
+	repository   Repository
+	utilPassword UtilPassword
 }
 
-func NewService(repository Repository) Service {
+func NewService(repository Repository, utilPassword UtilPassword) Service {
 	return &service{
 		repository,
+		utilPassword,
 	}
 }
 
@@ -35,7 +36,7 @@ func (s *service) CreateUser(data CreateUserData) error {
 		return serv.ErrInvalidData
 	}
 
-	hashedPassword, _ := util.EncryptPassword(data.Password)
+	hashedPassword, _ := s.utilPassword.EncryptPassword(data.Password)
 	user := NewUser(
 		data.Name,
 		data.Email,
@@ -59,7 +60,7 @@ func (s *service) LoginUser(email string, password string) (string, error) {
 		return "", serv.ErrNotFound
 	}
 
-	if !util.ComparePassword(userData.Password, password) {
+	if !s.utilPassword.ComparePassword(userData.Password, password) {
 		return "", errors.New("wrong credentials")
 	}
 

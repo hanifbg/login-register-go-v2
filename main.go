@@ -12,6 +12,7 @@ import (
 	userHandler "github.com/hanifbg/login_register_v2/handler/user"
 	userRepo "github.com/hanifbg/login_register_v2/repository/user"
 	userService "github.com/hanifbg/login_register_v2/service/user"
+	util "github.com/hanifbg/login_register_v2/util/password"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -21,10 +22,11 @@ func main() {
 	configData := config.GetConfig()
 
 	dbConnection := config.NewDatabaseConnection(configData)
+	util := util.NewUtil()
 
 	userRepo := userRepo.NewGormDBRepository(dbConnection)
 
-	userService := userService.NewService(userRepo)
+	userService := userService.NewService(userRepo, util)
 
 	userHandler := userHandler.NewHandler(userService)
 
